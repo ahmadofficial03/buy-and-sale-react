@@ -3,6 +3,15 @@ import { Link } from "react-router-dom";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import signIn from "../assets/signIn.png";
 import OAuth from "../components/OAuth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,12 +21,54 @@ export default function SignUp() {
     password: "",
   });
   const { name, email, password } = formData;
+  const navigate = useNavigate();
 
   function onChange(e) {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
     }));
+  }
+
+  async function onSubmit(e) {
+    e.preventDefault();
+
+    if (email !== "" && name !== "" && password !== "") {
+      try {
+        const auth = getAuth();
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        updateProfile(auth.currentUser, {
+          displayName: name,
+        });
+
+        const user = userCredential.user;
+        const formDataCopy = { ...formData };
+        delete formDataCopy.password;
+        formDataCopy.timestamp = serverTimestamp();
+        await setDoc(doc(db, "users", user.uid), formDataCopy);
+        toast.success("Successfully Sign Up");
+        navigate("/");
+      } catch (error) {
+        toast.error("Something went wrong with the registration");
+      }
+    }
+
+    if (name === "") {
+      toast.error("Please enter a name");
+    }
+
+    if (email === "") {
+      toast.error("Please enter a email");
+    }
+
+    if (password === "") {
+      toast.error("Enter more than 6 character password");
+    }
   }
 
   return (
@@ -28,7 +79,7 @@ export default function SignUp() {
           <img src={signIn} alt="key" className="w-full rounded-2xl" />
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form>
+          <form onSubmit={onSubmit}>
             <input
               type="text"
               id="name"
