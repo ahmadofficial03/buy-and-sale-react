@@ -18,7 +18,7 @@ export default function Header() {
           <img
             src={logo}
             alt="logo"
-            className="h-7 cursor-pointer"
+            className="h-8 cursor-pointer"
             onClick={() => navigate("/")}
           />
         </div>
@@ -34,7 +34,7 @@ export default function Header() {
             </li>
             <li
               className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
-                pathMatchRoute("/offers") && "text-black border-b-red-500"
+                pathMatchRoute("/offers") && "text-black-300 border-b-red-500"
               }`}
               onClick={() => navigate("/offers")}
             >

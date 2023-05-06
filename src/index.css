@@ -9,6 +9,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(240, 254, 244);
 }
 
 code {
@@ -20,3 +21,11 @@ code {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.border {
+  border: 1px solid black;
+}
+
+.background-color {
+  background: var(--pink);
+}
